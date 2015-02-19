@@ -5,7 +5,7 @@ Menu = function(game) {
 Menu.prototype = {
   create: function() {
     console.log('menu create');
-    var title = this.game.add.text(200, 100, 'Title - Click to Continue', { font: '35px Arial', fill: '#ffffff' });
+    var title = this.game.add.text(200, 100, 'Title - Tap to Continue', { font: '35px Arial', fill: '#ffffff' });
     title.anchor.setTo(0.5, 0.5);
     
     this.game.input.onDown.addOnce(this.start, this);
