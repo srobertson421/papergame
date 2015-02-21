@@ -2,12 +2,13 @@ Player = function(game) {
   this.game = game;
   this.player = null;
   this.cursors = null;
+  this.jumpButton = null;
 }
 
 Player.prototype = {
   
   create: function() {
-    console.log('player create');
+    //console.log('player create');
     this.player = this.game.add.sprite(50, 100, 'person');
     this.player.anchor.setTo(0.5, 0.5);
     this.game.physics.arcade.enable(this.player);
@@ -17,6 +18,7 @@ Player.prototype = {
     this.player.animations.add('walk', ['idle', 'walk1', 'walk4', 'idle', 'walk3', 'walk2'], 7, true, false);
     
     this.cursors = this.game.input.keyboard.createCursorKeys();
+    this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     
     // Mobile Controls
     if (!this.game.device.desktop) {
@@ -25,6 +27,7 @@ Player.prototype = {
   },
   
   update: function() {
+    
     this.player.body.velocity.x = 0;
     if (this.cursors.left.isDown || this.moveLeft) {
       this.player.scale.x = -1;
@@ -38,6 +41,15 @@ Player.prototype = {
       this.player.animations.stop();
       this.player.frameName = 'idle';
     }
+    
+    if (this.jumpButton.isDown && this.player.body.onFloor() || this.jump && this.player.body.onFloor()) {
+      this.player.body.velocity.y = -350;
+    }
+    
+    if (!this.player.body.onFloor()) {
+      this.player.animations.stop();
+      this.player.frameName = 'walk3';
+    }
   },
   
   // Build our inputs for mobile playing
@@ -45,6 +57,17 @@ Player.prototype = {
 
     this.moveLeft = false;
     this.moveRight = false;
+    this.jump = false;
+    
+    this.upButton = this.game.add.sprite(this.game.width - 100, this.game.height - 50, 'up');
+    this.upButton.anchor.setTo(0.5, 0.5);
+    this.upButton.inputEnabled = true;
+    this.upButton.alph = 0.5;
+    this.upButton.fixedToCamera = true;
+    this.upButton.events.onInputOver.add(function(){this.jump=true;}, this);
+    this.upButton.events.onInputOut.add(function(){this.jump=false;}, this);
+    this.upButton.events.onInputDown.add(function(){this.jump=true;}, this);
+    this.upButton.events.onInputUp.add(function(){this.jump=false;}, this);
 
     this.leftButton = this.game.add.sprite(this.game.width - 150, this.game.height - 25, 'left');
     this.leftButton.anchor.setTo(0.5, 0.5);
